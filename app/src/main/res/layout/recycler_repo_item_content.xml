@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/repo_name_tv"
+        style="@style/repo_item_repoName" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/repo_item_details"
+            android:text="@string/by" />
+
+        <TextView
+            android:id="@+id/repo_owner_name"
+            style="@style/repo_item_details" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/repo_description_tv"
+        style="@style/repo_item_details" />
+
+
+</LinearLayout>
+

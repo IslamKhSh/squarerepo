@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="rad_main_recycler_cardView">@dimen/_4sdp</dimen>
+    <dimen name="shadowSize_main_recycler_cardView">@dimen/_2sdp</dimen>
+
+    <dimen name="space_all_large">@dimen/_20sdp</dimen>
+    <dimen name="space_all_medium">@dimen/_10sdp</dimen>
+    <dimen name="space_all_small">@dimen/_5sdp</dimen>
+
+    <dimen name="textSize_all_all_large">@dimen/_13ssp</dimen>
+    <dimen name="textSize_all_all_medium">@dimen/_10ssp</dimen>
+    <dimen name="textSize_all_all_small">@dimen/_9ssp</dimen>
+</resources>
