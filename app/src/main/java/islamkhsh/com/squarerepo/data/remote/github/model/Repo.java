@@ -1,18 +1,14 @@
 package islamkhsh.com.squarerepo.data.remote.github.model;
 
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by ESLAM on 12/25/2018.
  */
-
 public class Repo {
 
-    private Integer id;
+    private int id;
     private String node_id;
     private String name;
     private String full_name;
@@ -85,6 +81,7 @@ public class Repo {
     private Integer watchers;
     private String default_branch;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
 
     public Integer getId() {
         return id;

@@ -1,13 +1,17 @@
 package islamkhsh.com.squarerepo.data.remote.github;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.paging.PageKeyedDataSource;
+import android.arch.paging.PositionalDataSource;
+import android.content.Context;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import islamkhsh.com.squarerepo.common.Constants;
+import islamkhsh.com.squarerepo.common.util.Okhttp3Interceptor;
 import islamkhsh.com.squarerepo.data.remote.github.model.Repo;
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,25 +22,39 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by ESLAM on 12/26/2018.
  */
 
-public class RepoDataSource extends PageKeyedDataSource<Integer, Repo> {
+public class RepoDataSource extends PositionalDataSource<Repo> {
 
     private GithubService githubService;
 
-    public RepoDataSource() {
+    public RepoDataSource(final Context context) {
+
+        Cache cache = new Cache(context.getCacheDir(), Constants.CACHE_SIZE);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .cache(cache)
+                .addNetworkInterceptor(Okhttp3Interceptor.getOnlineInterceptor(context))
+                .addInterceptor(Okhttp3Interceptor.getOfflineInterceptor(context))
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build();
 
         this.githubService = retrofit.create(GithubService.class);
     }
 
+
     @Override
-    public void loadInitial(@NonNull LoadInitialParams<Integer> params, @NonNull final LoadInitialCallback<Integer, Repo> callback) {
-        githubService.getAllRepos(0, params.requestedLoadSize).enqueue(new Callback<List<Repo>>() {
+    public void loadInitial(@NonNull final LoadInitialParams params, @NonNull final LoadInitialCallback<Repo> callback) {
+        githubService.getAllRepos(0, params.pageSize).enqueue(new Callback<List<Repo>>() {
             @Override
             public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
-               callback.onResult(response.body(),null,Constants.ROWS_NUM+1);
+                if (response.isSuccessful())
+                    callback.onResult(response.body(), 0);
+                else
+                    callback.onResult(new ArrayList<Repo>(), 0);
             }
 
             @Override
@@ -47,17 +65,11 @@ public class RepoDataSource extends PageKeyedDataSource<Integer, Repo> {
     }
 
     @Override
-    public void loadBefore(@NonNull LoadParams<Integer> params, @NonNull LoadCallback<Integer, Repo> callback) {
-
-    }
-
-    @Override
-    public void loadAfter(@NonNull final LoadParams<Integer> params, @NonNull final LoadCallback<Integer, Repo> callback) {
-        githubService.getAllRepos(params.key, params.requestedLoadSize).enqueue(new Callback<List<Repo>>() {
+    public void loadRange(@NonNull final LoadRangeParams params, @NonNull final LoadRangeCallback<Repo> callback) {
+        githubService.getAllRepos((params.startPosition / params.loadSize) + 1, params.loadSize).enqueue(new Callback<List<Repo>>() {
             @Override
             public void onResponse(Call<List<Repo>> call, Response<List<Repo>> response) {
-                int nextKey = (params.key == response.body().size()) ? null : params.key+1;
-                callback.onResult(response.body(),nextKey);
+                callback.onResult(response.body());
             }
 
             @Override
@@ -65,5 +77,6 @@ public class RepoDataSource extends PageKeyedDataSource<Integer, Repo> {
 
             }
         });
+
     }
 }

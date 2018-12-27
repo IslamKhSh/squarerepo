@@ -8,5 +8,8 @@ import islamkhsh.com.squarerepo.ui.base.BaseView;
 
 public interface MainView extends BaseView {
     void setupRepoRecycler();
+
+    void setupSwipeRefresh();
+
     void setupSearchView();
 }

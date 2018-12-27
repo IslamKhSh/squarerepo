@@ -1,6 +1,7 @@
 package islamkhsh.com.squarerepo.data.remote.github;
 
 import android.arch.paging.DataSource;
+import android.content.Context;
 
 import islamkhsh.com.squarerepo.data.remote.github.model.Repo;
 
@@ -10,10 +11,18 @@ import islamkhsh.com.squarerepo.data.remote.github.model.Repo;
 
 public class RepoDataSourceFactory extends DataSource.Factory<Integer, Repo>  {
 
-    @Override
-    public DataSource<Integer, Repo> create() {
-        return new RepoDataSource();
+    public RepoDataSource repoDataSource;
+    private Context context;
+
+    public RepoDataSourceFactory(Context applicationContext) {
+        this.context = applicationContext;
     }
 
+    @Override
+    public DataSource<Integer, Repo> create() {
+        if (repoDataSource == null)
+            repoDataSource = new RepoDataSource(context);
+        return repoDataSource;
+    }
 
 }

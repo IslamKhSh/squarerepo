@@ -3,6 +3,7 @@ package islamkhsh.com.squarerepo.data.remote;
 import android.arch.lifecycle.LiveData;
 import android.arch.paging.LivePagedListBuilder;
 import android.arch.paging.PagedList;
+import android.content.Context;
 
 import java.util.concurrent.Executors;
 
@@ -16,38 +17,50 @@ import islamkhsh.com.squarerepo.data.remote.github.model.Repo;
 
 public class AppRemote implements RemoteHelper {
 
-    public LiveData<PagedList<Repo>> repoList;
-
-
     //singleton pattern
     private static final Object LOCK = new Object();
     private static volatile AppRemote sInstance;
+    private LiveData<PagedList<Repo>> repoList;
+    private RepoDataSourceFactory repoDataSourceFactory;
 
-    public static AppRemote getInstance() {
+    private AppRemote(Context context) {
+        repoDataSourceFactory = new RepoDataSourceFactory(context);
+        setupPagedList(true, context);
+    }
+
+    public static AppRemote getInstance(Context applicationContext) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 if (sInstance == null) {
-                    sInstance = new AppRemote();
+                    sInstance = new AppRemote(applicationContext);
                 }
             }
         }
         return sInstance;
     }
 
-    private AppRemote() {
-        RepoDataSourceFactory repoDataSourceFactory = new RepoDataSourceFactory();
-
-        PagedList.Config config = (new PagedList.Config.Builder()).setEnablePlaceholders(true)
-                .setInitialLoadSizeHint(Constants.INISIAL_LOAD_SIZE)
-                .setPageSize(Constants.ROWS_NUM).build();
-
-        repoList = new LivePagedListBuilder<>(repoDataSourceFactory, config)
-                .setFetchExecutor(Executors.newFixedThreadPool(5))
-                .build();
-    }
-
     @Override
-    public LiveData<PagedList<Repo>> getRepoList(){
+    public void setupPagedList(Boolean refresh, Context context) {
+        if (repoList != null) ;
+            //repoDataSourceFactory.repoDataSource.invalidate();
+        else {
+
+            PagedList.Config config = (new PagedList.Config.Builder())
+                    .setEnablePlaceholders(false)
+                    .setInitialLoadSizeHint(Constants.INITIAL_LOAD_SIZE_HINT)
+                    .setPageSize(Constants.ROWS_NUM)
+                    .build();
+
+            repoList = new LivePagedListBuilder<>(repoDataSourceFactory, config)
+                    .setFetchExecutor(Executors.newFixedThreadPool(5))
+                    .build();
+        }
+    }
+    @Override
+    public LiveData<PagedList<Repo>> getRepoList(Boolean toRefresh, Context context) {
+        if (toRefresh)
+            repoDataSourceFactory.repoDataSource.invalidate();
+
         return repoList;
     }
 }

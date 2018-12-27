@@ -37,13 +37,13 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:textSize">@dimen/textSize_all_all_medium</item>
+        <item name="android:textSize">@dimen/textSize_all_medium</item>
         <item name="android:ellipsize">end</item>
         <item name="android:singleLine">true</item>
     </style>
 
     <style name="repo_item_repoName" parent="repo_item_details">
-        <item name="android:textSize">@dimen/textSize_all_all_large</item>
+        <item name="android:textSize">@dimen/textSize_all_large</item>
 
     </style>
 

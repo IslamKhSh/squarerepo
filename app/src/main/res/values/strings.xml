@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Square Repo</string>
-    <string name="action_search">search</string>
     <string name="by">By:</string>
     <string name="long_click_menu_title">Go to:</string>
     <string name="meue_item_repo">Repository</string>
